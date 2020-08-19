@@ -6,10 +6,19 @@ import 'package:dating_app/constants.dart';
 import 'package:dating_app/models/User.dart';
 import 'package:dating_app/components/CustomScaffold.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
 
 	final User user;
 	const Profile({@required this.user});
+
+	createState() => _Profile();
+
+}
+
+class _Profile extends State<Profile> {
+
+	TextStyle getRowTitleStyle() => Theme.of(context).textTheme.headline3.apply(fontSizeFactor: .8);
+	TextStyle getRowContentStyle() => Theme.of(context).textTheme.bodyText1;
 
 	@override
 	Widget build(BuildContext context) {
@@ -20,8 +29,6 @@ class Profile extends StatelessWidget {
 	}
 
 	Widget buildUI(BuildContext context) {
-		final TextStyle rowTitleStyle = Theme.of(context).textTheme.headline3.apply(fontSizeFactor: .8);
-
 		return Column(
 			children: [
 				Center(
@@ -31,11 +38,11 @@ class Profile extends StatelessWidget {
 								width: 128,
 							    height: 128,
 								child: CircleAvatar(
-									backgroundImage: NetworkImage(user.image),
+									backgroundImage: NetworkImage(widget.user.image),
 								),
 							),
 							SizedBox(height: defaultPadding,),
-							Text(user.pseudo, style: Theme.of(context).textTheme.headline2.apply(fontSizeFactor: 1.5, color: Colors.black),),
+							Text(widget.user.pseudo, style: Theme.of(context).textTheme.headline2.apply(fontSizeFactor: 1.5, color: Colors.black),),
 						],
 					),
 				),
@@ -43,73 +50,9 @@ class Profile extends StatelessWidget {
 				Column(
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						Row(
-							children: [
-								Text("About me", style: Theme.of(context).textTheme.headline3,),
-								Spacer(),
-								CustomButton(text: "Update", large: false, action: () {},)
-							],
-						),
-						SizedBox(height: defaultPadding / 2,),
-						Row(
-							children: [
-								Text("Name", style: rowTitleStyle,),
-								Spacer(),
-								Text(user.pseudo, style: Theme.of(context).textTheme.bodyText1,),
-							],
-						),
-						SizedBox(height: defaultPadding / 2,),
-						Row(
-							children: [
-								Text("Location", style: rowTitleStyle,),
-								Spacer(),
-								Text(user.location, style: Theme.of(context).textTheme.bodyText1,),
-							],
-						),
-						SizedBox(height: defaultPadding / 2,),
-						Row(
-							children: [
-								Text("Sex", style: rowTitleStyle,),
-								Spacer(),
-								Text(sexToString(), style: Theme.of(context).textTheme.bodyText1,),
-							],
-						),
-						SizedBox(height: defaultPadding / 2,),
-						Row(
-							children: [
-								Text("Hobbies", style: rowTitleStyle,),
-								Spacer(),
-								Text(user.hobbies.join(", "), style: Theme.of(context).textTheme.bodyText1,),
-							],
-						),
-						SizedBox(height: defaultPadding / 2,),
-						Text("Description", style: rowTitleStyle,),
-						SizedBox(height: defaultPadding / 2,),
-						Text(user.description, textAlign: TextAlign.justify, style: Theme.of(context).textTheme.bodyText1,),
-
+						aboutMeSection(),
 						SizedBox(height: defaultPadding,),
-						Row(
-							children: [
-								Text("My pictures", style: Theme.of(context).textTheme.headline3,),
-								Spacer(),
-								CustomButton(text: "Update", large: false, action: () {},)
-							],
-						),
-						SizedBox(height: defaultPadding / 2,),
-						GridView.count(
-							padding: EdgeInsets.all(0),
-							crossAxisCount: 2,
-							mainAxisSpacing: defaultPadding,
-							crossAxisSpacing: defaultPadding,
-							shrinkWrap: true,
-							physics: NeverScrollableScrollPhysics(),
-							children: [
-								DatingUserImage(user: user,),
-								DatingUserImage(user: user,),
-								DatingUserImage(user: user,),
-								DatingUserImage(user: user,),
-							],
-						),
+						picturesSection(),
 						SizedBox(height: defaultPadding,),
 					],
 				)
@@ -117,8 +60,82 @@ class Profile extends StatelessWidget {
 		);
 	}
 
+	Widget aboutMeSection() {
+		return Column(
+			crossAxisAlignment: CrossAxisAlignment.start,
+			children: [
+				Row(
+					children: [
+						Text("About me", style: Theme.of(context).textTheme.headline3,),
+						Spacer(),
+						CustomButton(text: "Update", large: false, action: () {},)
+					],
+				),
+				SizedBox(height: defaultPadding / 2,),
+				buildProfileRows(),
+				SizedBox(height: defaultPadding / 2,),
+				Text("Description", style: getRowTitleStyle(),),
+				SizedBox(height: defaultPadding / 2,),
+				Text(widget.user.description, textAlign: TextAlign.justify, style: getRowContentStyle(),),
+			],
+		);
+	}
+
+	Widget picturesSection() {
+		return Column(
+			children: [
+				Row(
+					children: [
+						Text("My pictures", style: Theme.of(context).textTheme.headline3,),
+						Spacer(),
+						CustomButton(text: "Update", large: false, action: () {},)
+					],
+				),
+				SizedBox(height: defaultPadding / 2,),
+				GridView.count(
+					padding: EdgeInsets.all(0),
+					crossAxisCount: 2,
+					mainAxisSpacing: defaultPadding,
+					crossAxisSpacing: defaultPadding,
+					shrinkWrap: true,
+					physics: NeverScrollableScrollPhysics(),
+					children: [
+						DatingUserImage(user: widget.user,),
+						DatingUserImage(user: widget.user,),
+						DatingUserImage(user: widget.user,),
+						DatingUserImage(user: widget.user,),
+					],
+				),
+			],
+		);
+	}
+
 	String sexToString() {
-		return user.sex == Sex.MAN ? "Man" : user.sex == Sex.WOMAN ? "Woman" : "Non binary";
+		return widget.user.sex == Sex.MAN ? "Man" : widget.user.sex == Sex.WOMAN ? "Woman" : "Non binary";
+	}
+
+	Widget buildProfileRows() {
+		return Column(
+			children: [
+				buildProfileRow("Name", widget.user.pseudo),
+				SizedBox(height: defaultPadding / 2,),
+				buildProfileRow("Location", widget.user.location),
+				SizedBox(height: defaultPadding / 2,),
+				buildProfileRow("Sex", sexToString()),
+				SizedBox(height: defaultPadding / 2,),
+				buildProfileRow("Hobbies", widget.user.hobbies.join(", ")),
+			],
+		);
+	}
+
+	Widget buildProfileRow(String key, String value) {
+		return Row(
+			children: [
+				Text(key, style: getRowTitleStyle(),),
+				Spacer(),
+				Text(value, style: getRowContentStyle()),
+			],
+		);
 	}
 
 }
