@@ -20,9 +20,14 @@ class CustomButton extends CButton {
 
 	RaisedButton buildButton(BuildContext context) {
 		return RaisedButton(
-			child: Text(text.toUpperCase(), style: Theme.of(context).textTheme.button,),
+			child: Text(
+				text.toUpperCase(),
+				style: large
+					? Theme.of(context).textTheme.button
+					: Theme.of(context).textTheme.button.apply(fontSizeFactor: .8),
+			),
 			onPressed: action,
-			padding: EdgeInsets.symmetric(vertical: 16),
+			padding: large ? EdgeInsets.symmetric(vertical: 16) : EdgeInsets.symmetric(vertical: 8),
 			color: Theme.of(context).primaryColor,
 			elevation: 5,
 			shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

@@ -1,4 +1,5 @@
 import 'package:dating_app/constants.dart';
+import 'package:dating_app/users.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +37,7 @@ class _App extends State<App> {
 		Dating(),
 		Likes(),
 		Messages(),
-		Profile(),
+		Profile(user: users[0],),
 	];
 
 	changeTab(int index) {
@@ -52,7 +53,7 @@ class _App extends State<App> {
 			bottomNavigationBar: BottomNavigationBar(
 				type: BottomNavigationBarType.fixed,
 				unselectedItemColor: kColorDarkGrey,
-				selectedItemColor: kColorRed,
+				selectedItemColor: Theme.of(context).primaryColor,
 				elevation: 1000,
 				items: [
 					BottomNavigationBarItem(
