@@ -1,15 +1,16 @@
-import 'package:dating_app/components/buttons/CustomButton.dart';
-import 'package:dating_app/components/images/DatingUserImage.dart';
 import 'package:flutter/material.dart';
 import 'package:dating_app/constants.dart';
 
 import 'package:dating_app/models/User.dart';
 import 'package:dating_app/components/CustomScaffold.dart';
+import 'package:dating_app/components/buttons/CustomButton.dart';
+import 'package:dating_app/components/images/DatingUserImage.dart';
 
 class Profile extends StatefulWidget {
 
 	final User user;
-	const Profile({@required this.user});
+	final bool modalProfileView;
+	const Profile({@required this.user, this.modalProfileView = false});
 
 	createState() => _Profile();
 
@@ -22,10 +23,12 @@ class _Profile extends State<Profile> {
 
 	@override
 	Widget build(BuildContext context) {
-		return CustomScaffold(
-			pageTitle: "My profile",
-			body: buildUI(context),
-		);
+		return widget.modalProfileView
+			? SingleChildScrollView(child: buildUI(context),)
+			: CustomScaffold(
+				pageTitle: "My profile",
+				body: buildUI(context),
+			);
 	}
 
 	Widget buildUI(BuildContext context) {
@@ -42,7 +45,10 @@ class _Profile extends State<Profile> {
 								),
 							),
 							SizedBox(height: defaultPadding,),
-							Text(widget.user.pseudo, style: Theme.of(context).textTheme.headline2.apply(fontSizeFactor: 1.5, color: Colors.black),),
+							Text(
+								widget.user.pseudo,
+								style: Theme.of(context).textTheme.headline2.apply(fontSizeFactor: 1.5, color: Colors.black),
+							),
 						],
 					),
 				),
@@ -64,14 +70,7 @@ class _Profile extends State<Profile> {
 		return Column(
 			crossAxisAlignment: CrossAxisAlignment.start,
 			children: [
-				Row(
-					children: [
-						Text("About me", style: Theme.of(context).textTheme.headline3,),
-						Spacer(),
-						CustomButton(text: "Update", large: false, action: () {},)
-					],
-				),
-				SizedBox(height: defaultPadding / 2,),
+				buildHeaderSection("About me", () {}),
 				buildProfileRows(),
 				SizedBox(height: defaultPadding / 2,),
 				Text("Description", style: getRowTitleStyle(),),
@@ -84,13 +83,7 @@ class _Profile extends State<Profile> {
 	Widget picturesSection() {
 		return Column(
 			children: [
-				Row(
-					children: [
-						Text("My pictures", style: Theme.of(context).textTheme.headline3,),
-						Spacer(),
-						CustomButton(text: "Update", large: false, action: () {},)
-					],
-				),
+				buildHeaderSection("My pictures", () {}),
 				SizedBox(height: defaultPadding / 2,),
 				GridView.count(
 					padding: EdgeInsets.all(0),
@@ -112,6 +105,21 @@ class _Profile extends State<Profile> {
 
 	String sexToString() {
 		return widget.user.sex == Sex.MAN ? "Man" : widget.user.sex == Sex.WOMAN ? "Woman" : "Non binary";
+	}
+
+	Widget buildHeaderSection(String title, Function action) {
+		return Column(
+			children: [
+				Row(
+					children: [
+						Text(title, style: Theme.of(context).textTheme.headline3,),
+						Spacer(),
+						CustomButton(text: "Update", large: false, action: action,)
+					],
+				),
+				SizedBox(height: defaultPadding / 2,),
+			],
+		);
 	}
 
 	Widget buildProfileRows() {

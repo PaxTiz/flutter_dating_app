@@ -19,6 +19,10 @@ class _DatingUserImage extends State<DatingUserImage> {
 
 	@override
 	Widget build(BuildContext context) {
+		return buildUI();
+	}
+
+	Widget buildUI() {
 		return ClipRRect(
 			borderRadius: BorderRadius.all(Radius.circular(8)),
 			child: widget.showUserDetails ? _showAvatarWithDetails() : _showAvatar(),
